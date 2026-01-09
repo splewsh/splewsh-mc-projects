@@ -7,30 +7,31 @@ const currentPath = Astro.url.pathname;
 ---
 
 <header>
+	<a href="#main" class="skip-link">Skip to main</a>
 	<nav>
 		<div class="internal-links header-title">
 			<a href="/">{SITE_TITLE}</a>
 		</div>
 		<div class="internal-links desktop-nav">
 			<div class="dropdown">
-				<button class={`dropbtn ${['/harmony', '/blacksmith'].includes(currentPath) ? 'active' : ''}`}>Performance &darr;</button>
-				<div class="dropdown-content">
-					<HeaderLink href="/harmony">&middot; Harmony</HeaderLink>
-					<HeaderLink href="/blacksmith">&middot; Blacksmith</HeaderLink>
+				<button aria-controls="dropdown-performance" aria-expanded="false" class={`dropbtn ${['/harmony', '/blacksmith'].includes(currentPath) ? 'active' : ''}`}>Performance &darr;</button>
+				<ul id="dropdown-performance" class="dropdown-content">
+					<li><HeaderLink href="/harmony">&middot; Harmony</HeaderLink></li>
+					<li><HeaderLink href="/blacksmith">&middot; Blacksmith</HeaderLink></li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<button aria-controls="dropdown-game_related" aria-expanded="false" class={`dropbtn ${['/portalmodpack', '/bioshockmodpack'].includes(currentPath) ? 'active' : ''}`}>Game-related &darr;</button>
+				<div id="dropdown-game_related" class="dropdown-content">
+					<li><HeaderLink href="/portalmodpack">&middot; PortalMP</HeaderLink></li>
+					<li><HeaderLink href="/bioshockmodpack">&middot; BioshockMP</HeaderLink></li>
 				</div>
 			</div>
 			<div class="dropdown">
-				<button class={`dropbtn ${['/portalmodpack', '/bioshockmodpack'].includes(currentPath) ? 'active' : ''}`}>Game-related &darr;</button>
-				<div class="dropdown-content">
-					<HeaderLink href="/portalmodpack">&middot; PortalMP</HeaderLink>
-					<HeaderLink href="/bioshockmodpack">&middot; BioshockMP</HeaderLink>
-				</div>
-			</div>
-			<div class="dropdown">
-				<button class={`dropbtn ${[ '/glowlichenfix', '/excalibur'].includes(currentPath) ? 'active' : ''}`}>Miscellaneous &darr;</button>
-				<div class="dropdown-content">
-					<HeaderLink href="/glowlichenfix">&middot; GlowLichenFix</HeaderLink>
-					<HeaderLink href="/excalibur">&middot; Excalibur</HeaderLink>
+				<button aria-controls="dropdown-misc" aria-expanded="false" class={`dropbtn ${[ '/glowlichenfix', '/excalibur'].includes(currentPath) ? 'active' : ''}`}>Miscellaneous &darr;</button>
+				<div id="dropdown-misc" class="dropdown-content">
+					<li><HeaderLink href="/glowlichenfix">&middot; GlowLichenFix</HeaderLink></li>
+					<li><HeaderLink href="/excalibur">&middot; Excalibur</HeaderLink></li>
 				</div>
 			</div>
 		</div>
@@ -156,6 +157,20 @@ const currentPath = Astro.url.pathname;
 				});
 			});
 		}
+
+		const dropdowns = document.querySelectorAll('.dropdown');
+		dropdowns.forEach(dropdown => {
+			const button = dropdown.querySelector('.dropbtn');
+			const content = dropdown.querySelector('.dropdown-content');
+			
+			if (button && content) {
+				dropdown.addEventListener('mouseenter', () => button.setAttribute('aria-expanded', 'true'));
+				dropdown.addEventListener('mouseleave', () => button.setAttribute('aria-expanded', 'false'));
+
+				dropdown.addEventListener('focusin', () => button.setAttribute('aria-expanded', 'true'));
+				dropdown.addEventListener('focusout', () => dropdown.matches(':focus-within') && button.setAttribute('aria-expanded', 'false'));
+			}
+		});
 	});
 </script>
 
@@ -177,6 +192,22 @@ const currentPath = Astro.url.pathname;
 		text-decoration: none;
 		background-color: var(--black);
 		color: var(--white);
+	}
+
+	.skip-link {
+		position: fixed;
+		top: -100%;
+		z-index: 10;
+		margin-inline: auto;
+		font-family: "Press Start 2P", sans-serif;
+		padding-inline: 1em;
+
+		background-color: var(--accent);
+		color: var(--white);
+
+		&:focus {
+			top: 0.25em;
+		}
 	}
 
 	h2 {
@@ -207,6 +238,7 @@ const currentPath = Astro.url.pathname;
 	}
 	
 	nav a:hover,
+	nav a:focus,
 	nav a.active {
 		text-decoration: none;
 		background-color: var(--accent);
@@ -250,6 +282,8 @@ const currentPath = Astro.url.pathname;
 	}
 
 	.dropdown-content {
+		list-style-type: none;
+		padding-left: 0;
 		display: none;
 		position: absolute;
 		background-color: var(--white);
@@ -266,11 +300,13 @@ const currentPath = Astro.url.pathname;
 		margin: 0 !important;
 	}
 
-	.dropdown:hover .dropdown-content {
+	.dropdown:hover .dropdown-content,
+	.dropdown:focus-within .dropdown-content {
 		display: block;
 	}
 
-	.dropdown:hover .dropbtn {
+	.dropdown:hover .dropbtn,
+	.dropdown:focus-within .dropbtn {
 		background-color: var(--accent);
 		color: var(--white);
 	}
@@ -363,6 +399,7 @@ const currentPath = Astro.url.pathname;
 	}
 
 	.mobile-section a:hover,
+	.mobile-section a:focus,
 	.mobile-section a.active {
 		background-color: var(--accent);
 		color: var(--white);
@@ -380,6 +417,12 @@ const currentPath = Astro.url.pathname;
 	.mobile-social-links a {
 		display: flex;
 		color: var(--black);
+	}
+
+	.mobile-social-links a:hover,
+	.mobile-social-links a:focus {
+		background-color: var(--accent);
+		color: var(--white);
 	}
 
 	@media (min-width: 1131px) {
