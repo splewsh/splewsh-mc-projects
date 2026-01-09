@@ -42,11 +42,15 @@ body {
 	color: var(--black);
 	font-size: 20px;
 	line-height: 1.7;
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
 }
 main {
 	max-width: calc(100% - 0.75em);
 	margin: auto;
 	padding: 1em;
+	flex-grow: 1;
 }
 h1,
 h2,
